@@ -48,7 +48,7 @@ def dataScraper(test_number, question_count, file_name):
             # if the question is a screenshot and not text,
             # it throws exception. In that case, just save the answer to the file
             if e.__class__.__name__ == 'NoSuchElementException':
-                row = ['', solution]
+                row = ['[Image]', solution]
                 length = len(df)
                 df.loc[length] = row
             else:
