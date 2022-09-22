@@ -117,8 +117,9 @@ def handleTextQuery(df, file_name, i):
                     handleImageQuery(df, file_name, i)
                     break
                 except Exception as e:
-                    print(e.args)
-            print(e.args)
+                    # print(e.args)
+                    pass
+            # print(e.args)
 
 # submit answers 
 def submitAnswers(question_count, file_name):
@@ -141,12 +142,14 @@ def submitAnswers(question_count, file_name):
                 handleImageQuery(df, file_name, i)
             # if the problem is text based
             except Exception as e:
-                print('Image error:', e.args)
+                # print('Image error:', e.args)
+                pass
                 
                 #handles text based query
                 handleTextQuery(df, file_name, i)
         except Exception as e:
-            print(e.args)
+            # print(e.args)
+            pass
 
 #  ============================ DRIVER CODE ================================
 def run(web_driver):
@@ -158,12 +161,12 @@ def run(web_driver):
     print('\nWait while the mock test page is being loaded...')
     driver.get('https://uims.cuchd.in/uims/frmMockTest.aspx')
 
-    
     # taking other required inputs
-    file_name = input('Enter file name: ')
-    print('Press ENTER after starting the test')
-    enter = input('>> ')
+    file_name = input('\nEnter file name to read answers: ')
     question_count  = int(input('\nEnter number of questions in the test: '))
+    
+    print('\nPress ENTER after starting the test')
+    enter = input('>> ')
     
     # answering questions
     print('\nPlease wait while your test is being answered...')
