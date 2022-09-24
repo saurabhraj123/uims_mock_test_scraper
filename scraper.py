@@ -31,7 +31,7 @@ def imageToText(location):
     img = Image.open(location)
     
     # path where the tesseract module is installed
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR/tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR/tesseract.exe'
     
     # converts the image to result and saves it into result variable
     result = pytesseract.image_to_string(img)

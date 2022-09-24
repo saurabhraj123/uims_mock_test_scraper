@@ -29,7 +29,7 @@ def loginPrompt():
 # starting point of execution
 if __name__ == '__main__':
     # loading chrome driver 
-    driver = webdriver.Chrome(r'C:\Users\Saurabh Raj\Desktop\web scraping\chromedriver.exe')
+    driver = webdriver.Chrome(r'C:\Users\Saurabh Raj\Downloads\Programs\chromedriver.exe')
     
     # login prompt
     loginPrompt()
@@ -54,12 +54,7 @@ if __name__ == '__main__':
             elif selection == 2:
                 submit.run(driver)
             else:
-                print('''\nThank you for using the app. 
-                            
-                           Thank you
-                           
-                           Saurabh Raj
-                           ''')
+                print('\nThank you for using the app.\n- Saurabh Raj')
                 break
             
             # line break

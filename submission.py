@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import pytesseract
 from PIL import Image
+from selenium.webdriver.common.by import By
 
 # wait while loading
 def waitUntilLoaded():
@@ -20,7 +21,7 @@ def imageToText(location):
     img = Image.open(location)
     
     # path where the tesseract module is installed
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR/tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR/tesseract.exe'
     
     # converts the image to result and saves it into result variable
     result = pytesseract.image_to_string(img)
@@ -67,7 +68,7 @@ def searchAndSubmit(df, problem_text):
             right_answer = getAnswer(options)
             
             # options on the test page in form of a list 
-            test_options = driver.find_elements_by_class_name('list-answer-selection')[0].text.splitlines()
+            test_options = driver.find_element('xpath', "(//*[@class = 'list-answer-selection'])").text.splitlines()
             
             # finds and submit the right answer 
             findAndSelect(right_answer, test_options)
@@ -130,7 +131,7 @@ def submitAnswers(question_count, file_name):
     # looping through each question and answering
     for i in range(0, question_count):
         # click on the question number 
-        driver.find_elements_by_class_name('QuestionSel')[i].click()
+        driver.find_element('xpath', '(//*[@class = "QuestionSel"])[' + str(i+1) + ']').click()
         
         # waits until the question is loaded
         waitUntilLoaded()
