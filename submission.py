@@ -81,6 +81,9 @@ def searchAndSubmit(df, problem_text):
         problem_without_spaces = df['Problem Statement'][i].replace(" ", "")
         problem_without_spaces = problem_without_spaces.replace('\n', "")
         
+        problem_text = problem_text.replace(' ', '')
+        problem_text = problem_text.replace('\n', '')
+        
         # if problem is found in the csv file
         if problem_without_spaces == problem_text:
             # split the options from the csv in form of a list 
@@ -97,17 +100,12 @@ def searchAndSubmit(df, problem_text):
 
 # the question in image based 
 def handleImageQuery(df, file_name, i):
-    # print('Before file location')
     # file location to save to 
     user = os.path.expanduser('~')
     file_location = user + "\Documents\\" + file_name + '_' + str(i+1) + '.png'
-    # print('After file location')
     
-    # print('Before image text')
     # image to text conversion
     problem = imageToText(file_location)
-    # print('After image text')
-    # print('[Image Problem]:', problem)
     
     # searches for the problem and submit it with the right solution
     searchAndSubmit(df, problem)
@@ -122,8 +120,6 @@ def handleTextQuery(df, file_name, i):
             
             # problem statement = problem_total - undesired_text
             problem = problem_total.replace(undesired_text, "")
-            problem = problem.replace("\n", "")
-            problem = problem.replace(" ", "")
             
             # print('Problem Statement:', problem)
 
@@ -136,7 +132,6 @@ def handleTextQuery(df, file_name, i):
             if problem == '':
                 print('problem is empty')
                 handleImageQuery(df, file_name, i)
-                continue
         
             break
         except Exception as e:
