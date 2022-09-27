@@ -1,6 +1,9 @@
 # Importing libraries
 import os
 import re
+import urllib
+from io import StringIO
+import urllib.request
 import pandas as pd
 import pytesseract
 from PIL import Image
@@ -15,8 +18,28 @@ def waitUntilLoaded():
 # converts image to text 
 def imageToText(location):
     # take screenshot of the image and save it to 'location'
-    driver.find_element('xpath', '//*[@id="ctl02_imgQuestion"]').screenshot(location)
+    img = driver.find_element('xpath', '//*[@id="ctl02_imgQuestion"]')
+    src = img.get_attribute('src')
+
+    # img_link = 'https://uims.cuchd.in/uims/' + src
     
+    # saving file to documents
+    # urllib.request.urlretrieve(img_link, location)
+
+    driver.execute_script("window.open('about:blank', 'secondtab');")
+
+    driver.switch_to.window("secondtab")            
+    driver.get(src)
+    driver.find_element('xpath', '/html/body/img').screenshot(location)
+
+    parent = driver.window_handles[0]
+    driver.switch_to.window(parent)
+    
+    # img.screenshot(location)
+    # response = requests.get(src)
+    
+    # img_file = cStringIO.StringIO(urllib.urlopen(src).read())
+        
     # opening an image from the source path
     img = Image.open(location)
     

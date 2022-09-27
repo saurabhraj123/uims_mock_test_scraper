@@ -1,5 +1,7 @@
 # importing libraries
 import os
+import urllib
+import urllib.request
 import pandas as pd
 import pytesseract
 from PIL import Image
@@ -25,7 +27,10 @@ def click(id_type, location):
 # converts image to text 
 def imageToText(location):
     # take screenshot of the image and save it to 'location'
-    driver.find_element('xpath', '//*[@id="ContentPlaceHolder1_imgquestion"]').screenshot(location)
+    img = driver.find_element('xpath', '//*[@id="ContentPlaceHolder1_imgquestion"]')
+    src = img.get_attribute('src')
+    urllib.request.urlretrieve(src, location)
+    # img.screenshot(location)
     
     # opening an image from the source path
     img = Image.open(location)
