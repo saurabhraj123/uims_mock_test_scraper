@@ -29,8 +29,9 @@ def imageToText(location):
     # take screenshot of the image and save it to 'location'
     img = driver.find_element('xpath', '//*[@id="ContentPlaceHolder1_imgquestion"]')
     src = img.get_attribute('src')
+    
+    # saving image using image url
     urllib.request.urlretrieve(src, location)
-    # img.screenshot(location)
     
     # opening an image from the source path
     img = Image.open(location)

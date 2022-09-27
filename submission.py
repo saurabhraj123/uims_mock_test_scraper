@@ -2,8 +2,6 @@
 import os
 import re
 import urllib
-from io import StringIO
-import urllib.request
 import pandas as pd
 import pytesseract
 from PIL import Image
@@ -21,25 +19,22 @@ def imageToText(location):
     img = driver.find_element('xpath', '//*[@id="ctl02_imgQuestion"]')
     src = img.get_attribute('src')
 
-    # img_link = 'https://uims.cuchd.in/uims/' + src
-    
-    # saving file to documents
-    # urllib.request.urlretrieve(img_link, location)
-
+    # open a new tab
     driver.execute_script("window.open('about:blank', 'secondtab');")
 
+    # switch to the new tab
     driver.switch_to.window("secondtab")            
+    
+    # go to the image url
     driver.get(src)
+    
+    # take screenshot of the image and save it to 'location'
     driver.find_element('xpath', '/html/body/img').screenshot(location)
-
+    
+    # switch back to the parent tab
     parent = driver.window_handles[0]
     driver.switch_to.window(parent)
     
-    # img.screenshot(location)
-    # response = requests.get(src)
-    
-    # img_file = cStringIO.StringIO(urllib.urlopen(src).read())
-        
     # opening an image from the source path
     img = Image.open(location)
     
@@ -82,8 +77,12 @@ def searchAndSubmit(df, problem_text):
     for i in df.index:
         found = False
         
+        # problem statement without spaces and line breaks
+        problem_without_spaces = df['Problem Statement'][i].replace(" ", "")
+        problem_without_spaces = problem_without_spaces.replace('\n', "")
+        
         # if problem is found in the csv file
-        if df['Problem Statement'][i].strip() == problem_text.strip():
+        if problem_without_spaces == problem_text:
             # split the options from the csv in form of a list 
             options = df['Answer'][i].splitlines()
             
@@ -115,35 +114,39 @@ def handleImageQuery(df, file_name, i):
 
 # the problem is text based 
 def handleTextQuery(df, file_name, i):
-    count = 1
     while True:
         try:
-            # print('Inside loop. Count:', count)
-            problem = driver.find_element('xpath', '//*[@id="divQuestionOptions"]/p[' + str(count) + ']').text
-        
-            # print('Problem Statement:', problem)
+            # total text and undesired_text insidde the total_text
+            problem_total = driver.find_element('xpath', '//*[@id="divQuestionOptions"]').text
+            undesired_text = driver.find_element('xpath', '//*[@class="answer-wrap"]').text
             
-            # if current <p> doesn't have any text, continue
-            if problem == '':
-                # print('problem is empty')
-                count += 1
-                continue
-        
+            # problem statement = problem_total - undesired_text
+            problem = problem_total.replace(undesired_text, "")
+            problem = problem.replace("\n", "")
+            problem = problem.replace(" ", "")
+            
+            # print('Problem Statement:', problem)
+
             # print('Just before Searching')
             # searches for the problem and submit it with the right solution
             searchAndSubmit(df, problem)
             # print('After before Searching')
+            
+            # if current <p> doesn't have any text, continue
+            if problem == '':
+                print('problem is empty')
+                handleImageQuery(df, file_name, i)
+                continue
+        
             break
         except Exception as e:
-            count += 1
-            if count % 5 == 0:
-                try:
-                    handleImageQuery(df, file_name, i)
-                    break
-                except Exception as e:
-                    # print(e.args)
-                    pass
-            # print(e.args)
+            try:
+                handleImageQuery(df, file_name, i)
+                break
+            except Exception as e:
+                print(e.args)
+                pass
+            print(e.args)
 
 # submit answers 
 def submitAnswers(question_count, file_name):
@@ -158,22 +161,15 @@ def submitAnswers(question_count, file_name):
         
         # waits until the question is loaded
         waitUntilLoaded()
-        
+
         try:
-            # checking if the problem is image based
-            try:
-                # handles if problem is image based
-                handleImageQuery(df, file_name, i)
-            # if the problem is text based
-            except Exception as e:
-                # print('Image error:', e.args)
-                pass
-                
-                #handles text based query
-                handleTextQuery(df, file_name, i)
+            #handles text based query
+            handleTextQuery(df, file_name, i)
         except Exception as e:
-            # print(e.args)
-            pass
+            # handles if problem is image based
+            print(e)
+            print(e.args)
+            handleImageQuery(df, file_name, i)
 
 #  ============================ DRIVER CODE ================================
 def run(web_driver):
